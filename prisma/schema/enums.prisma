@@ -1,0 +1,46 @@
+ enum Role {
+  PATIENT
+  DISPATCHER
+  ADMIN
+}
+
+enum Priority {
+  CRITICAL
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum RequestStatus {
+  REQUESTED
+  DISPATCHED
+  EN_ROUTE
+  PICKED_UP
+  HOSPITAL_SELECTED
+  ARRIVED
+  COMPLETED
+  CANCELLED
+}
+
+enum AmbulanceStatus {
+  AVAILABLE
+  DISPATCHED
+  EN_ROUTE
+  BUSY
+  OFFLINE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  DELETED
+
+}
