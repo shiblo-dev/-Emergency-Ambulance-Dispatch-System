@@ -180,9 +180,7 @@ Four roles exist in the schema â€” `SUPER_ADMIN`, `ADMIN`, `DOCTOR`, `PATIENT` â
 `auth(...roles)`, exported from `checkAuth.ts`, is the route guard:
 
 ```ts
-router.get('/me', auth(Role.ADMIN, Role.DOCTOR, Role.PATIENT, Role.SUPER_ADMIN), AuthController.getMe)
-```
-
+ 
 What it actually does, in order:
 
 1. Reads the token from the `accessToken` cookie, falling back to the `Authorization` header.
