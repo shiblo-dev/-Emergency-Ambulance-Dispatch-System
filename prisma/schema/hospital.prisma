@@ -1,0 +1,21 @@
+model Hospital {
+  id           String   @id @default(uuid())
+  name         String
+  address      String
+  city         String
+  latitude     Float?
+  longitude    Float?
+  phone        String
+  totalBeds    Int      @default(0)
+  availableBeds Int     @default(0)
+
+  isDeleted    Boolean  @default(false)
+  deletedAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ambulances        Ambulance[]        // এই hospital-এ base করা ambulance গুলো
+  emergencyRequests EmergencyRequest[] // এই hospital-এ যাওয়া requests
+
+  @@map("hospitals")
+}

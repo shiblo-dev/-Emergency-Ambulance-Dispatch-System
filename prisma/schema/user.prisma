@@ -16,4 +16,5 @@ model User {
 
 
   @@index([email])
+  @@map("users")
 }

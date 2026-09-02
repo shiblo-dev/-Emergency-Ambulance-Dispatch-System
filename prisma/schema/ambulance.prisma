@@ -1,0 +1,18 @@
+model Ambulance {
+  id            String          @id @default(uuid())
+  vehicleNumber String          @unique
+  type          String
+  status        AmbulanceStatus @default(AVAILABLE)
+  driverName    String
+  driverPhone   String
+  driverLicense String
+
+  hospitalId    String?
+  hospital      Hospital?       @relation(fields: [hospitalId], references: [id])
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?       // soft delete
+
+  @@map("ambulances")
+}

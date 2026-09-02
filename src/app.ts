@@ -9,10 +9,10 @@ import { notFound } from "./app/middleware/notFound";
 const app: Application = express();
 
 app.use(
-  cors({
-    origin: config.frontend_url,
-    credentials: true,
-  }),
+	cors({
+		origin: config.frontend_url,
+		credentials: true,
+	}),
 );
 
 // Enable URL-encoded form data parsing
@@ -22,15 +22,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
- 
-
-
 // Basic route
 app.get("/", async (req: Request, res: Response) => {
-  res.status(httpStatus.OK).json({
-    success: true,
-    message: "Welcome to Emergency Ambulance Dispatch System",
-  });
+	res.status(httpStatus.OK).json({
+		success: true,
+		message: "Welcome to Emergency Ambulance Dispatch System",
+	});
 });
 
 app.use(globalErrorHandler);
