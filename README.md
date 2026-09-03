@@ -1,12 +1,10 @@
-# PH Healthcare System — Backend
-
-REST API for a doctor-appointment platform: patients book consultations, doctors run them, admins manage the platform. This repo is the backend only.
+# Emergency-Ambulance-Dispatch-System — Backend
 
 **Stack:** Node.js · Express 5 · TypeScript · Prisma 7 · PostgreSQL · JWT auth
 
 ## Where the project stands today
 
-This is an early build, not the finished product. Right now the only working feature is authentication — a patient can register, log in, and fetch their own profile. Appointments, doctor schedules, payments, and everything else in [`Project Requirements.md`](./Project%20Requirements.md) is planned but not built yet.
+This is an early build, not the finished product. Right now the only working feature is authentication — a patient can register, log in, and fetch their own profile
 
 Treat this README as a description of what the code *actually does today*, including its rough edges. A few are called out directly in [Known limitations](#known-limitations) further down — read that section before assuming something is broken on your end.
 
@@ -29,15 +27,7 @@ npm install
 
 **2. Set up your environment file**
 
-```bash
-cp .env.example .env
-```
 
-Open `.env` and point `DATABASE_URL` at a Postgres database you can connect to:
-
-```
-DATABASE_URL="postgresql://YOUR_USERNAME:YOUR_PASSWORD@localhost:5432/ph_healthcare?schema=public"
-```
 
 The database doesn't need to exist beforehand — `prisma migrate dev` creates it. The other variables in `.env.example` are fine to leave as-is for local development; see [Environment variables](#environment-variables) for what each one does.
 
@@ -74,8 +64,7 @@ Confirm it's up:
 
 ```bash
 curl http://localhost:5000/
-# {"success":true,"message":"Welcome to PH Healthcare System Backend"}
-```
+ ```
 
 ## Environment variables
 
@@ -175,12 +164,12 @@ curl http://localhost:5000/api/v1/auth/me \
 
 ## Roles and authentication
 
-Four roles exist in the schema — `SUPER_ADMIN`, `ADMIN`, `DOCTOR`, `PATIENT` — but **registration always creates a `PATIENT`.** `registerPatient` hardcodes `Role.PATIENT` and only reads `name`, `email`, and `password` out of the request body, so sending `"role": "ADMIN"` does nothing. There's no admin module and no seed script, so the other three roles aren't reachable through the API yet. To test them, register a normal user and change their `role` directly in the database with `npx prisma studio` (opens at `http://localhost:5555`) — then log in again, since the role is baked into the token at login time and an old token keeps the old role.
+Four roles exist in the schema — `DISPATCHER`, `ADMIN`, `PATIENT` — but **registration always creates a `PATIENT`.** `registerPatient` hardcodes `Role.PATIENT` and only reads `name`, `email`, and `password` out of the request body, so sending `"role": "ADMIN"` does nothing. There's no admin module and no seed script, so the other three roles aren't reachable through the API yet. To test them, register a normal user and change their `role` directly in the database with `npx prisma studio` (opens at `http://localhost:5555`) — then log in again, since the role is baked into the token at login time and an old token keeps the old role.
 
 `auth(...roles)`, exported from `checkAuth.ts`, is the route guard:
 
 ```ts
- 
+
 What it actually does, in order:
 
 1. Reads the token from the `accessToken` cookie, falling back to the `Authorization` header.
@@ -212,7 +201,7 @@ New features go under `src/app/module/<name>/` as four files with strict respons
 Then mount it in `app.ts` next to the existing line:
 
 ```ts
-app.use('/api/v1/doctor', DoctorRoutes)
+app.use('/api/v1/Auth', AuthRoutes)
 ```
 
 Two rules keep the module boundaries useful rather than decorative:
