@@ -7,14 +7,17 @@ model User {
   phone         String?
   role          Role     @default(PATIENT)
   emailVerified      Boolean      @default(false)
-   status             UserStatus   @default(ACTIVE)
+  status             UserStatus   @default(ACTIVE)
   needPasswordChange Boolean      @default(false)
-   isDeleted          Boolean      @default(false)
+  authProvider AuthProvider @default(CREDENTIAL)
+  dispatchesGiven Dispatch[]
+  emergencyRequests EmergencyRequest[]
+  payments          Payment[]
+  auditLogs AuditLog[]
+  isDeleted          Boolean      @default(false)
   deletedAt          DateTime?
   createdAt          DateTime     @default(now())
   updatedAt          DateTime     @updatedAt
-
-
   @@index([email])
   @@map("users")
 }

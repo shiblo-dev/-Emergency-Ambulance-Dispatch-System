@@ -1,0 +1,20 @@
+model Dispatch {
+  id          String   @id @default(uuid())
+
+  emergencyRequestId String @unique    
+  emergencyRequest   EmergencyRequest @relation(fields: [emergencyRequestId], references: [id])
+
+  ambulanceId String
+  ambulance   Ambulance @relation(fields: [ambulanceId], references: [id])
+
+  dispatcherId String
+  dispatcher   User     @relation(fields: [dispatcherId], references: [id])
+
+  dispatchedAt DateTime @default(now())
+  notes        String?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("dispatches")
+}

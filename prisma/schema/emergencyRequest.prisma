@@ -12,15 +12,15 @@ model EmergencyRequest {
   pickupLatitude  Float
   pickupLongitude Float
 
-  // Assigned ambulance (nullable — dispatch হওয়ার আগে null থাকবে)
+  dispatch Dispatch?
   ambulanceId String?
   ambulance   Ambulance?    @relation(fields: [ambulanceId], references: [id])
 
-  // Selected hospital (nullable — hospital selection স্টেপের আগে null)
+
   hospitalId  String?
   hospital    Hospital?     @relation(fields: [hospitalId], references: [id])
 
-  description String?       // কী emergency, symptoms ইত্যাদি
+  description String?
 
   isDeleted   Boolean       @default(false)
   deletedAt   DateTime?
@@ -29,5 +29,7 @@ model EmergencyRequest {
 
   payment     Payment?
 
-  @@map("emergency_requests")
+  @@index([status])
+@@index([priority])
+ @@map("emergency_requests")
 }

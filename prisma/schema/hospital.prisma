@@ -17,5 +17,7 @@ model Hospital {
   ambulances        Ambulance[]        // এই hospital-এ base করা ambulance গুলো
   emergencyRequests EmergencyRequest[] // এই hospital-এ যাওয়া requests
 
-  @@map("hospitals")
+
+  @@index([city])
+   @@map("hospitals")
 }

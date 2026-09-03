@@ -6,13 +6,15 @@ model Ambulance {
   driverName    String
   driverPhone   String
   driverLicense String
-
+dispatches Dispatch[]
   hospitalId    String?
   hospital      Hospital?       @relation(fields: [hospitalId], references: [id])
-
+ emergencyRequests EmergencyRequest[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
-  deletedAt     DateTime?       // soft delete
+  deletedAt     DateTime?
 
-  @@map("ambulances")
+
+  @@index([status])
+@@map("ambulances")
 }
