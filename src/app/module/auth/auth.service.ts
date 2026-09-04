@@ -41,7 +41,7 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
 		throw new AppError(httpStatus.CONFLICT, "User with this email already exists");
 	}
 
-	const hashedPassword = await bcrypt.hash(password, 8);
+	const hashedPassword = await bcrypt.hash(password, Number(config.bcrypt_salt_rounds));
 
 	const expirationSeconds = 5 * 60;
 
@@ -150,16 +150,10 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 			role: Role.PATIENT,
 			status: UserStatus.ACTIVE,
 			emailVerified: true,
-			patient: {
-				create: {
-					name: patientPayload.name,
-					email: patientPayload.email,
-					contactNumber: patientPayload?.patient?.contactNumber || "",
-				},
-			},
+
 		},
 		omit: { password: true },
-		include: { patient: true },
+
 	});
 
 	await redisClient.del(patientRegistrationKey);
@@ -179,12 +173,10 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 		from: config.email_sender,
 		to: email,
 		subject: "Welcome To PH Healthcare System",
-		// text : `Your OTP is ${otp}`
-		// html: `<h1>Your OTP is ${otp}</h1>`
 		html,
 	});
 
-	const { patient, ...user } = createdUser;
+	const {   ...user } = createdUser;
 	const jwtPayload = {
 		userId: user.id,
 		name: user.name,
@@ -206,7 +198,7 @@ const verifyPatientEmail = async (payload: IVerifyEmailPayload) => {
 
 	return {
 		user,
-		patient,
+
 		accessToken,
 		refreshToken,
 	};
