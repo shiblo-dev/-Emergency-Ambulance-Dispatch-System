@@ -45,8 +45,22 @@ const getAllDispatches = catchAsync(async (req: Request, res: Response) => {
     data: result.data,
   });
 });
+
+const getSingleDispatch = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await DispatchService.getSingleDispatch(id as string);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Dispatch retrieved successfully',
+    data: result,
+  });
+});
+
+
 export const DispatchController = {
   createDispatch,
 getAllDispatches,
-
+getSingleDispatch
 };

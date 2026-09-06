@@ -129,9 +129,21 @@ const getAllDispatches = async (
   };
 };
 
+const getSingleDispatch = async (id: string) => {
+  const result = await prisma.dispatch.findUniqueOrThrow({
+    where: { id },
+    include: {
+      ambulance: true,
+      dispatcher: { select: { id: true, name: true, email: true } },
+      emergencyRequest: true,
+    },
+  });
+  return result;
+};
 
 export const DispatchService = {
   createDispatch,
   getAllDispatches,
+  getSingleDispatch
 
 };
