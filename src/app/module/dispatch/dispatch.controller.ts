@@ -59,8 +59,35 @@ const getSingleDispatch = catchAsync(async (req: Request, res: Response) => {
 });
 
 
+const updateDispatch = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await DispatchService.updateDispatch(id as string, req.body);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Dispatch updated successfully',
+    data: result,
+  });
+});
+const updateTripStatus = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  const userId = req.user?.userId as string;
+
+  const result = await DispatchService.updateTripStatus(id as string, status, userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Trip status updated successfully',
+    data: result,
+  });
+});
 export const DispatchController = {
   createDispatch,
 getAllDispatches,
-getSingleDispatch
+getSingleDispatch,
+updateDispatch,
+updateTripStatus
 };

@@ -20,9 +20,21 @@ router.get(
   DispatchController.getAllDispatches
 );
 router.get(
-  '/',
+  '/:id',
   auth(Role.DISPATCHER, Role.ADMIN),
-  DispatchController.getAllDispatches
+  DispatchController.getSingleDispatch
+);
+router.patch(
+  '/:id',
+  auth(Role.DISPATCHER, Role.ADMIN),
+  validateRequest(DispatchValidation.updateDispatch),
+  DispatchController.updateDispatch
+);
+router.patch(
+  '/:id/status',
+  auth(Role.DISPATCHER, Role.ADMIN),
+  validateRequest(DispatchValidation.updateTripStatus),
+  DispatchController.updateTripStatus
 );
 
 export const DispatchRoutes = router;

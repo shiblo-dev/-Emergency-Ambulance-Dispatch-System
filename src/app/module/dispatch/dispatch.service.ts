@@ -141,9 +141,64 @@ const getSingleDispatch = async (id: string) => {
   return result;
 };
 
+
+const updateDispatch = async (id: string, payload: Partial<TDispatch>) => {
+  await prisma.dispatch.findUniqueOrThrow({ where: { id } });
+
+  const result = await prisma.dispatch.update({
+    where: { id },
+    data: payload,
+  });
+
+  return result;
+};
+const updateTripStatus = async (
+  id: string,
+  status: RequestStatus,
+  userId: string
+) => {
+  const dispatch = await prisma.dispatch.findUniqueOrThrow({
+    where: { id },
+    include: { emergencyRequest: true },
+  });
+
+  const oldStatus = dispatch.emergencyRequest.status;
+
+  const result = await prisma.$transaction(async (tx) => {
+    const updatedRequest = await tx.emergencyRequest.update({
+      where: { id: dispatch.emergencyRequestId },
+      data: { status },
+    });
+
+    if (status === RequestStatus.COMPLETED) {
+      await tx.ambulance.update({
+        where: { id: dispatch.ambulanceId },
+        data: { status: AmbulanceStatus.AVAILABLE },
+      });
+    }
+
+    await tx.auditLog.create({
+      data: {
+        userId,
+        action: 'TRIP_STATUS_UPDATED',
+        entityType: 'EmergencyRequest',
+        entityId: dispatch.emergencyRequestId,
+        oldValue: { status: oldStatus },
+        newValue: { status },
+      },
+    });
+
+    return updatedRequest;
+  });
+
+  return result;
+};
+
 export const DispatchService = {
   createDispatch,
   getAllDispatches,
-  getSingleDispatch
+  getSingleDispatch,
+  updateDispatch,
+  updateTripStatus,
 
 };
