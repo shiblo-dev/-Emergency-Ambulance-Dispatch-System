@@ -81,9 +81,57 @@ const createDispatch = async (payload: TDispatch) => {
   return result;
 };
 
+const getAllDispatches = async (
+  filters: TDispatchFilters,
+  paginationOptions: any
+) => {
+  const { searchTerm, ...filterData } = filters;
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(paginationOptions);
+
+  const andConditions: Prisma.DispatchWhereInput[] = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      OR: dispatchSearchableFields.map((field) => ({
+        [field]: { contains: searchTerm, mode: 'insensitive' },
+      })),
+    });
+  }
+
+  if (Object.keys(filterData).length > 0) {
+    andConditions.push({
+      AND: Object.keys(filterData).map((key) => ({
+        [key]: (filterData as any)[key],
+      })),
+    });
+  }
+  const whereConditions: Prisma.DispatchWhereInput =
+    andConditions.length > 0 ? { AND: andConditions } : {};
+
+  const result = await prisma.dispatch.findMany({
+    where: whereConditions,
+    skip,
+    take: limit,
+    orderBy: sortBy ? { [sortBy]: sortOrder } : { createdAt: 'desc' },
+    include: {
+      ambulance: true,
+      dispatcher: { select: { id: true, name: true, email: true } },
+      emergencyRequest: true,
+    },
+  });
+
+  const total = await prisma.dispatch.count({ where: whereConditions });
+
+  return {
+    meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    data: result,
+  };
+};
 
 
 export const DispatchService = {
   createDispatch,
-  
+  getAllDispatches,
+
 };

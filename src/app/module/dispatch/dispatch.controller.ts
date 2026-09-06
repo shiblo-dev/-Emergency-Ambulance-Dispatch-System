@@ -23,7 +23,30 @@ const createDispatch = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllDispatches = catchAsync(async (req: Request, res: Response) => {
+  const filters = pick(req.query, dispatchFilterableFields);
+  const paginationOptions = pick(req.query, [
+    'page',
+    'limit',
+    'sortBy',
+    'sortOrder',
+  ]);
+
+  const result = await DispatchService.getAllDispatches(
+    filters,
+    paginationOptions
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Dispatches retrieved successfully',
+    meta: result.meta,
+    data: result.data,
+  });
+});
 export const DispatchController = {
   createDispatch,
+getAllDispatches,
 
 };

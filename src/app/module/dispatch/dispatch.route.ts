@@ -14,7 +14,11 @@ router.post(
   validateRequest(DispatchValidation.createDispatch),
   DispatchController.createDispatch
 );
-
+router.get(
+  '/',
+  auth(Role.DISPATCHER, Role.ADMIN),
+  DispatchController.getAllDispatches
+);
 
 
 export const DispatchRoutes = router;
