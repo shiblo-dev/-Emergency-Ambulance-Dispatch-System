@@ -14,13 +14,21 @@ export default {
 	jwt_refresh_secret: process.env.JWT_REFRESH_SECRET!,
 	jwt_access_expires_in: process.env.JWT_ACCESS_EXPIRES_IN!,
 	jwt_refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN!,
+
 	google_client_id: process.env.GOOGLE_CLIENT_ID!,
+
 	tester_admin_name: process.env.TESTER_ADMIN_NAME!,
 	tester_admin_email: process.env.TESTER_ADMIN_EMAIL!,
 	tester_admin_password: process.env.TESTER_ADMIN_PASSWORD!,
+
 	tester_patient_name: process.env.TESTER_PATIENT_NAME!,
 	tester_patient_email: process.env.TESTER_PATIENT_EMAIL!,
 	tester_patient_password: process.env.TESTER_PATIENT_PASSWORD!,
+
+	tester_dispatcher_name: process.env.TESTER_DISPATCHER_NAME!,
+	tester_dispatcher_email: process.env.TESTER_DISPATCHER_EMAIL!,
+	tester_dispatcher_password: process.env.TESTER_DISPATCHER_PASSWORD!,
+	
 	redis_user: process.env.REDIS_USER!,
 	redis_password: process.env.REDIS_PASSWORD!,
 	redis_host: process.env.REDIS_HOST!,
