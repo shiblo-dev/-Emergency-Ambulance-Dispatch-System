@@ -9,6 +9,10 @@ import { AuthRoutes } from "./app/module/auth/auth.route";
 import { AmbulanceRoutes } from "./app/module/ambulances/ambulance.route";
 import { EmergencyRequestRoutes } from "./app/module/emergencyRequest/emergencyRequest.route";
 import { DispatchRoutes } from "./app/module/dispatch/dispatch.route";
+import { HospitalRoutes } from "./app/module/hospital/hospital.route";
+import { AnalyticsRoutes } from "./app/module/analytics/analytics.route";
+import { AuditLogRoutes } from "./app/module/auditLog/auditLog.route";
+import { PaymentRoutes } from "./app/module/payment/payment.route";
 
 const app: Application = express();
 
@@ -28,6 +32,10 @@ app.use(cookieParser());
  app.use("/api/v1/ambulances", AmbulanceRoutes);
  app.use("/api/v1/emergency-requests", EmergencyRequestRoutes);
  app.use("/api/v1/dispatch", DispatchRoutes);
+ app.use("/api/v1/hospitals", HospitalRoutes);
+ app.use("/api/v1/analytics", AnalyticsRoutes);
+ app.use("/api/v1/auditLog", AuditLogRoutes);
+ app.use("/api/v1/payment", PaymentRoutes);
 app.get("/", async (req: Request, res: Response) => {
 	res.status(httpStatus.OK).json({
 		success: true,
