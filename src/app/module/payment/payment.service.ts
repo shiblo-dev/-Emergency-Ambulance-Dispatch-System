@@ -43,10 +43,68 @@ import httpStatus from "http-status";
         },
     };
 };
+const getAllPayments = async (query: IQuery) => {
+    const limit = query.limit ? Number(query.limit) : 10;
+    const page = query.page ? Number(query.page) : 1;
+    const skip = (page - 1) * limit;
+    const sortBy = query.sortBy ? query.sortBy : "createdAt";
+    const sortOrder = query.sortOrder ? query.sortOrder : "desc";
+
+    const andConditions: PaymentWhereInput[] = [];
+
+    if (query.patientEmail) {
+        andConditions.push({
+            patient: {
+                email: query.patientEmail as string,
+            },
+        });
+    }
+
+    if (query.status) {
+        andConditions.push({
+            status: query.status as PaymentWhereInput["status"],
+        });
+    }
+
+    const whereConditions: PaymentWhereInput =
+        andConditions.length > 0 ? { AND: andConditions } : {};
+
+    const payments = await prisma.payment.findMany({
+        where: whereConditions,
+        take: limit,
+        skip,
+        orderBy: { [sortBy]: sortOrder },
+        include: {
+            patient: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                },
+            },
+            emergencyRequest: true,
+        },
+    });
+
+    const total = await prisma.payment.count({
+        where: whereConditions,
+    });
+
+    return {
+        data: payments,
+        meta: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+        },
+    };
+};
 
 
 
 export const PaymentServices = {
     getMyPayments,
+    getAllPayments, 
 
 };
