@@ -102,9 +102,38 @@ const getAllPayments = async (query: IQuery) => {
 };
 
 
+const getSinglePayment = async (paymentId: string, user: RequestUser) => {
+    const payment = await prisma.payment.findUnique({
+        where: { id: paymentId },
+        include: {
+            patient: {
+                select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                },
+            },
+            emergencyRequest: true,
+        },
+    });
+
+    if (!payment) {
+        throw new AppError(httpStatus.NOT_FOUND, "Payment Not Found");
+    }
+
+    if (user.role === Role.PATIENT && payment.patientId !== user.userId) {
+        throw new AppError(
+            httpStatus.FORBIDDEN,
+            "You Are Not Allowed To View This Payment"
+        );
+    }
+
+    return payment;
+};
 
 export const PaymentServices = {
     getMyPayments,
-    getAllPayments, 
+    getAllPayments,
+    getSinglePayment
 
 };

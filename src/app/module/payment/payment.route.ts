@@ -13,5 +13,10 @@ router.get(
     PaymentController.getAllPayments,
 );
 
+router.get(
+    "/:paymentId",
+    auth(Role.PATIENT, Role.ADMIN, Role.DISPATCHER),
+    PaymentController.getSinglePayment,
+);
 
 export const PaymentRoutes = router;
