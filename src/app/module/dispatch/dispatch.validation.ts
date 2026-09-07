@@ -11,7 +11,6 @@ const createDispatch = z.object({
     notes: z.string().optional(),
   }),
 });
-
 const updateDispatch = z.object({
   body: z.object({
     notes: z.string().optional(),
@@ -25,7 +24,6 @@ const updateTripStatus = z.object({
     ),
   }),
 });
-
 
 export const DispatchValidation = {
   createDispatch,

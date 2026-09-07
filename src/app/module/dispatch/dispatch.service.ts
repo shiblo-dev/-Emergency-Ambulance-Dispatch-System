@@ -152,25 +152,48 @@ const updateDispatch = async (id: string, payload: Partial<TDispatch>) => {
 
   return result;
 };
+const ALLOWED_TRANSITIONS: Record<RequestStatus, RequestStatus[]> = {
+  REQUESTED: ['DISPATCHED', 'CANCELLED'],
+  DISPATCHED: ['EN_ROUTE', 'CANCELLED'],
+  EN_ROUTE: ['PICKED_UP', 'CANCELLED'],
+  PICKED_UP: ['HOSPITAL_SELECTED', 'CANCELLED'],
+  HOSPITAL_SELECTED: ['ARRIVED', 'CANCELLED'],
+  ARRIVED: ['COMPLETED'],
+  COMPLETED: [],
+  CANCELLED: [],
+};
+const TERMINAL_STATUSES: RequestStatus[] = [
+  RequestStatus.COMPLETED,
+  RequestStatus.CANCELLED,
+];
+
 const updateTripStatus = async (
   id: string,
   status: RequestStatus,
   userId: string
 ) => {
-  const dispatch = await prisma.dispatch.findUniqueOrThrow({
-    where: { id },
-    include: { emergencyRequest: true },
-  });
-
-  const oldStatus = dispatch.emergencyRequest.status;
-
   const result = await prisma.$transaction(async (tx) => {
+    const dispatch = await tx.dispatch.findUniqueOrThrow({
+      where: { id },
+      include: { emergencyRequest: true },
+    });
+
+    const oldStatus = dispatch.emergencyRequest.status;
+
+    if (!ALLOWED_TRANSITIONS[oldStatus]?.includes(status)) {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Cannot change status from ${oldStatus} to ${status}`
+      );
+    }
+
     const updatedRequest = await tx.emergencyRequest.update({
       where: { id: dispatch.emergencyRequestId },
       data: { status },
     });
 
-    if (status === RequestStatus.COMPLETED) {
+
+    if (TERMINAL_STATUSES.includes(status)) {
       await tx.ambulance.update({
         where: { id: dispatch.ambulanceId },
         data: { status: AmbulanceStatus.AVAILABLE },
