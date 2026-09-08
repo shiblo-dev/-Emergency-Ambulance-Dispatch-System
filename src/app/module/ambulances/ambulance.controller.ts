@@ -1,11 +1,10 @@
- import { Request, Response } from "express";
+import type { Request, Response } from "express";
 import httpStatus from "http-status";
 
 import { AmbulanceService } from "./ambulance.service";
- import pick from "../../utils/pick";
+import pick from "../../utils/pick";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-
 
 const createAmbulance = catchAsync(async (req: Request, res: Response) => {
 	const result = await AmbulanceService.createAmbulance(req.body);
@@ -28,14 +27,15 @@ const getAllAmbulances = catchAsync(async (req: Request, res: Response) => {
 		statusCode: httpStatus.OK,
 		success: true,
 		message: "Ambulances retrieved successfully",
-	 
+
 		data: result.data,
 	});
 });
 
 const getAmbulanceById = catchAsync(async (req: Request, res: Response) => {
-
-	const result = await AmbulanceService.getAmbulanceById(req.params.id as string);
+	const result = await AmbulanceService.getAmbulanceById(
+		req.params.id as string,
+	);
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
@@ -46,7 +46,10 @@ const getAmbulanceById = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateAmbulance = catchAsync(async (req: Request, res: Response) => {
-	const result = await AmbulanceService.updateAmbulance(req.params.id as string, req.body);
+	const result = await AmbulanceService.updateAmbulance(
+		req.params.id as string,
+		req.body,
+	);
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
@@ -56,30 +59,42 @@ const updateAmbulance = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
-const updateAmbulanceStatus = catchAsync(async (req: Request, res: Response) => {
-	const result = await AmbulanceService.updateAmbulanceStatus(req.params.id as string, req.body.status);
+const updateAmbulanceStatus = catchAsync(
+	async (req: Request, res: Response) => {
+		const result = await AmbulanceService.updateAmbulanceStatus(
+			req.params.id as string,
+			req.body.status,
+		);
 
-	sendResponse(res, {
-		statusCode: httpStatus.OK,
-		success: true,
-		message: "Ambulance status updated successfully",
-		data: result,
-	});
-});
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Ambulance status updated successfully",
+			data: result,
+		});
+	},
+);
 
-const updateAmbulanceLocation = catchAsync(async (req: Request, res: Response) => {
-	const result = await AmbulanceService.updateAmbulanceLocation(req.params.id as string, req.body);
+const updateAmbulanceLocation = catchAsync(
+	async (req: Request, res: Response) => {
+		const result = await AmbulanceService.updateAmbulanceLocation(
+			req.params.id as string,
+			req.body,
+		);
 
-	sendResponse(res, {
-		statusCode: httpStatus.OK,
-		success: true,
-		message: "Ambulance location updated successfully",
-		data: result,
-	});
-});
+		sendResponse(res, {
+			statusCode: httpStatus.OK,
+			success: true,
+			message: "Ambulance location updated successfully",
+			data: result,
+		});
+	},
+);
 
 const deleteAmbulance = catchAsync(async (req: Request, res: Response) => {
-	const result = await AmbulanceService.deleteAmbulance(req.params.id as string);
+	const result = await AmbulanceService.deleteAmbulance(
+		req.params.id as string,
+	);
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
@@ -98,5 +113,3 @@ export const AmbulanceController = {
 	updateAmbulanceLocation,
 	deleteAmbulance,
 };
-
-

@@ -1,12 +1,12 @@
 // NOTE: Adjust this import path to match where your Prisma-generated enums live
 
-import { AmbulanceStatus } from "../../../generated/prisma/enums";
+import type { AmbulanceStatus } from "../../../generated/prisma/enums";
 
 export interface IAmbulanceCreate {
 	vehicleNumber: string;
 	driverName: string;
 	driverPhone: string;
-	driverLicense: string;  
+	driverLicense: string;
 	type: string;
 	currentLatitude?: number;
 	currentLongitude?: number;

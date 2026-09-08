@@ -1,12 +1,11 @@
-
 import httpStatus from "http-status";
- import {
+import type {
 	IAmbulanceCreate,
 	IAmbulanceFilters,
 	IAmbulanceLocationUpdate,
 	IAmbulanceUpdate,
 } from "./ambulance.interface";
-import { AmbulanceStatus, Prisma } from "../../../generated/prisma/client";
+import { AmbulanceStatus, type Prisma } from "../../../generated/prisma/client";
 import { AppError } from "../../utils/AppError";
 import { prisma } from "../../lib/prisma";
 import { paginationHelper } from "../../utils/paginationhelper";
@@ -17,7 +16,10 @@ const createAmbulance = async (payload: IAmbulanceCreate) => {
 		where: { vehicleNumber: payload.vehicleNumber, deletedAt: null },
 	});
 	if (existing) {
-		throw new AppError(httpStatus.CONFLICT, "This vehicle number is already registered!");
+		throw new AppError(
+			httpStatus.CONFLICT,
+			"This vehicle number is already registered!",
+		);
 	}
 
 	const { hospitalId, ...rest } = payload;
@@ -36,9 +38,15 @@ const createAmbulance = async (payload: IAmbulanceCreate) => {
 // GET MANY (pagination + filtering + search)
 const getAllAmbulances = async (
 	filters: IAmbulanceFilters,
-	options: { page?: number; limit?: number; sortBy?: string; sortOrder?: "asc" | "desc" }
+	options: {
+		page?: number;
+		limit?: number;
+		sortBy?: string;
+		sortOrder?: "asc" | "desc";
+	},
 ) => {
-	const { page, limit, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options);
+	const { page, limit, skip, sortBy, sortOrder } =
+		paginationHelper.calculatePagination(options);
 	const { searchTerm, status, type } = filters;
 
 	const andConditions: Prisma.AmbulanceWhereInput[] = [{ deletedAt: null }];
@@ -106,7 +114,7 @@ const updateAmbulanceStatus = async (id: string, status: AmbulanceStatus) => {
 	) {
 		throw new AppError(
 			httpStatus.BAD_REQUEST,
-			"Cannot mark a dispatched ambulance as available directly. Complete the trip first!"
+			"Cannot mark a dispatched ambulance as available directly. Complete the trip first!",
 		);
 	}
 
@@ -118,7 +126,10 @@ const updateAmbulanceStatus = async (id: string, status: AmbulanceStatus) => {
 	return result;
 };
 
-const updateAmbulanceLocation = async (id: string, payload: IAmbulanceLocationUpdate) => {
+const updateAmbulanceLocation = async (
+	id: string,
+	payload: IAmbulanceLocationUpdate,
+) => {
 	await getAmbulanceById(id);
 
 	const result = await prisma.ambulance.update({

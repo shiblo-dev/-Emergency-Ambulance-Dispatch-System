@@ -15,10 +15,7 @@ const AmbulanceCreateZodSchema = z.object({
 		.string("Driver phone must be a string!!")
 		.min(11, "Phone number must be at least 11 characters!!")
 		.max(15),
-	driverLicense: z  
-    .string("License number must be a string!!")
-    .min(3)
-    .max(30),
+	driverLicense: z.string("License number must be a string!!").min(3).max(30),
 	type: z
 		.string("Ambulance type must be a string!!")
 		.min(2, "Ambulance type is required!!")
@@ -35,8 +32,14 @@ const AmbulanceStatusUpdateZodSchema = z.object({
 });
 
 const AmbulanceLocationUpdateZodSchema = z.object({
-	currentLatitude: z.number("currentLatitude must be a number!!").min(-90).max(90),
-	currentLongitude: z.number("currentLongitude must be a number!!").min(-180).max(180),
+	currentLatitude: z
+		.number("currentLatitude must be a number!!")
+		.min(-90)
+		.max(90),
+	currentLongitude: z
+		.number("currentLongitude must be a number!!")
+		.min(-180)
+		.max(180),
 });
 
 export const AmbulanceValidation = {

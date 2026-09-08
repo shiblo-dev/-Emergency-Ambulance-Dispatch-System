@@ -1,15 +1,15 @@
 export const emergencyRequestSearchableFields: string[] = [
-  "description",
-  "pickupAddress",
+	"description",
+	"pickupAddress",
 ];
 
 export const emergencyRequestFilterableFields: string[] = [
-  "searchTerm",
-  "status",
-  "priority",
-  "patientId",
-  "page",
-  "limit",
-  "sortBy",
-  "sortOrder",
+	"searchTerm",
+	"status",
+	"priority",
+	"patientId",
+	"page",
+	"limit",
+	"sortBy",
+	"sortOrder",
 ];

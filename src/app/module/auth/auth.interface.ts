@@ -1,6 +1,5 @@
 import type { Role } from "../../../generated/prisma/browser";
 
-
 export interface IRegisterPatientPayload {
 	name: string;
 	email: string;
@@ -40,6 +39,6 @@ export interface IResetPasswordPayload {
 }
 
 export interface IChangePasswordPayload {
-    oldPassword: string;
-    newPassword: string;
+	oldPassword: string;
+	newPassword: string;
 }

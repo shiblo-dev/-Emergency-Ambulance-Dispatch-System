@@ -1,17 +1,16 @@
 export type TMeta = {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
 };
 
 export interface IQuery {
-    searchTerm?: string
-    page?: string
-    limit?: string
-    sortOrder?: string
-    sortBy?: string
+	searchTerm?: string;
+	page?: string;
+	limit?: string;
+	sortOrder?: string;
+	sortBy?: string;
 
-
-    [key: string] : any
+	[key: string]: any;
 }

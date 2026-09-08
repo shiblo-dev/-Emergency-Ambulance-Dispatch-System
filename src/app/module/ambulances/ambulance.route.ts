@@ -12,32 +12,40 @@ router.post(
 	"/",
 	auth(Role.ADMIN, Role.DISPATCHER),
 	validateRequest(AmbulanceValidation.AmbulanceCreateZodSchema),
-	AmbulanceController.createAmbulance
+	AmbulanceController.createAmbulance,
 );
 
-router.get("/", auth(Role.ADMIN, Role.DISPATCHER, Role.PATIENT), AmbulanceController.getAllAmbulances);
+router.get(
+	"/",
+	auth(Role.ADMIN, Role.DISPATCHER, Role.PATIENT),
+	AmbulanceController.getAllAmbulances,
+);
 
-router.get("/:id", auth(Role.ADMIN, Role.DISPATCHER, Role.PATIENT), AmbulanceController.getAmbulanceById);
+router.get(
+	"/:id",
+	auth(Role.ADMIN, Role.DISPATCHER, Role.PATIENT),
+	AmbulanceController.getAmbulanceById,
+);
 
 router.patch(
 	"/:id",
 	auth(Role.ADMIN, Role.DISPATCHER),
 	validateRequest(AmbulanceValidation.AmbulanceUpdateZodSchema),
-	AmbulanceController.updateAmbulance
+	AmbulanceController.updateAmbulance,
 );
 
 router.patch(
 	"/:id/status",
 	auth(Role.ADMIN, Role.DISPATCHER),
 	validateRequest(AmbulanceValidation.AmbulanceStatusUpdateZodSchema),
-	AmbulanceController.updateAmbulanceStatus
+	AmbulanceController.updateAmbulanceStatus,
 );
 
 router.patch(
 	"/:id/location",
 	auth(Role.ADMIN, Role.DISPATCHER),
 	validateRequest(AmbulanceValidation.AmbulanceLocationUpdateZodSchema),
-	AmbulanceController.updateAmbulanceLocation
+	AmbulanceController.updateAmbulanceLocation,
 );
 
 router.delete("/:id", auth(Role.ADMIN), AmbulanceController.deleteAmbulance);

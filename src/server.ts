@@ -2,7 +2,11 @@ import app from "./app";
 import config from "./app/config";
 import { prisma } from "./app/lib/prisma";
 import { redisClient } from "./app/lib/redis";
-import { seedTesterAdmin, seedTesterDispatcher, seedTesterPatient } from "./app/utils/seed";
+import {
+	seedTesterAdmin,
+	seedTesterDispatcher,
+	seedTesterPatient,
+} from "./app/utils/seed";
 
 const PORT = config.port;
 
@@ -19,8 +23,6 @@ const main = async () => {
 		await seedTesterAdmin();
 		await seedTesterPatient();
 		await seedTesterDispatcher();
-
-
 	} catch (error) {
 		console.error("Error starting the server:", error);
 		await prisma.$disconnect();

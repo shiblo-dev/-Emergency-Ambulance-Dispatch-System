@@ -1,12 +1,17 @@
 export const auditLogFilterableFields = [
-    "searchTerm",
-    "userId",
-    "action",
-    "entityType",
-    "entityId",
-    "ipAddress",
-    "startDate",
-    "endDate",
+	"searchTerm",
+	"userId",
+	"action",
+	"entityType",
+	"entityId",
+	"ipAddress",
+	"startDate",
+	"endDate",
 ];
 
-export const auditLogSearchableFields = ["action", "entityType", "entityId", "ipAddress"];
+export const auditLogSearchableFields = [
+	"action",
+	"entityType",
+	"entityId",
+	"ipAddress",
+];

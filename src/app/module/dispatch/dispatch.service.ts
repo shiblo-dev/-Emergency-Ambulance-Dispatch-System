@@ -1,227 +1,227 @@
- import httpStatus from 'http-status';
+import httpStatus from "http-status";
 
 import {
-  TDispatch,
-  TDispatchFilters,
-  dispatchSearchableFields,
-} from './dispatch.interface';
-import { AmbulanceStatus, Prisma, PrismaClient, RequestStatus } from '../../../generated/prisma/client';
-import { AppError } from '../../utils/AppError';
-import { paginationHelper } from '../../utils/paginationhelper';
-import { prisma } from '../../lib/prisma';
-
-
+	type TDispatch,
+	type TDispatchFilters,
+	dispatchSearchableFields,
+} from "./dispatch.interface";
+import {
+	AmbulanceStatus,
+	type Prisma,
+	PrismaClient,
+	RequestStatus,
+} from "../../../generated/prisma/client";
+import { AppError } from "../../utils/AppError";
+import { paginationHelper } from "../../utils/paginationhelper";
+import { prisma } from "../../lib/prisma";
 
 const createDispatch = async (payload: TDispatch) => {
-  const { emergencyRequestId, ambulanceId, dispatcherId, notes } = payload;
-  const result = await prisma.$transaction(async (tx) => {
-    const emergencyRequest = await tx.emergencyRequest.findUniqueOrThrow({
-      where: { id: emergencyRequestId },
-    });
+	const { emergencyRequestId, ambulanceId, dispatcherId, notes } = payload;
+	const result = await prisma.$transaction(async (tx) => {
+		const emergencyRequest = await tx.emergencyRequest.findUniqueOrThrow({
+			where: { id: emergencyRequestId },
+		});
 
-    if (emergencyRequest.status !== RequestStatus.REQUESTED) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        'This emergency request is already being handled'
-      );
-    }
-    const ambulanceUpdateResult = await tx.ambulance.updateMany({
-      where: {
-        id: ambulanceId,
-        status: AmbulanceStatus.AVAILABLE,
-      },
-      data: {
-        status: AmbulanceStatus.DISPATCHED,
-      },
-    });
+		if (emergencyRequest.status !== RequestStatus.REQUESTED) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				"This emergency request is already being handled",
+			);
+		}
+		const ambulanceUpdateResult = await tx.ambulance.updateMany({
+			where: {
+				id: ambulanceId,
+				status: AmbulanceStatus.AVAILABLE,
+			},
+			data: {
+				status: AmbulanceStatus.DISPATCHED,
+			},
+		});
 
-    if (ambulanceUpdateResult.count === 0) {
-      throw new AppError(
-        httpStatus.CONFLICT,
-        'Ambulance is no longer available'
-      );
-    }
+		if (ambulanceUpdateResult.count === 0) {
+			throw new AppError(
+				httpStatus.CONFLICT,
+				"Ambulance is no longer available",
+			);
+		}
 
-    const dispatch = await tx.dispatch.create({
-      data: {
-        emergencyRequestId,
-        ambulanceId,
-        dispatcherId,
-        notes,
-      },
-      include: {
-        ambulance: true,
-        dispatcher: {
-          select: { id: true, name: true, email: true, role: true },
-        },
-        emergencyRequest: true,
-      },
-    });
-    await tx.emergencyRequest.update({
-      where: { id: emergencyRequestId },
-      data: { status: RequestStatus.DISPATCHED },
-    });
+		const dispatch = await tx.dispatch.create({
+			data: {
+				emergencyRequestId,
+				ambulanceId,
+				dispatcherId,
+				notes,
+			},
+			include: {
+				ambulance: true,
+				dispatcher: {
+					select: { id: true, name: true, email: true, role: true },
+				},
+				emergencyRequest: true,
+			},
+		});
+		await tx.emergencyRequest.update({
+			where: { id: emergencyRequestId },
+			data: { status: RequestStatus.DISPATCHED },
+		});
 
-  await tx.auditLog.create({
-  data: {
-    userId: dispatcherId,
-    action: 'DISPATCH_CREATED',
-    entityType: 'Dispatch',
-    entityId: dispatch.id,
-    newValue: {
-      emergencyRequestId,
-      ambulanceId,
-      dispatcherId,
-    },
-  },
-});
-    return dispatch;
-  });
+		await tx.auditLog.create({
+			data: {
+				userId: dispatcherId,
+				action: "DISPATCH_CREATED",
+				entityType: "Dispatch",
+				entityId: dispatch.id,
+				newValue: {
+					emergencyRequestId,
+					ambulanceId,
+					dispatcherId,
+				},
+			},
+		});
+		return dispatch;
+	});
 
-  return result;
+	return result;
 };
 
 const getAllDispatches = async (
-  filters: TDispatchFilters,
-  paginationOptions: any
+	filters: TDispatchFilters,
+	paginationOptions: any,
 ) => {
-  const { searchTerm, ...filterData } = filters;
-  const { page, limit, skip, sortBy, sortOrder } =
-    paginationHelper.calculatePagination(paginationOptions);
+	const { searchTerm, ...filterData } = filters;
+	const { page, limit, skip, sortBy, sortOrder } =
+		paginationHelper.calculatePagination(paginationOptions);
 
-  const andConditions: Prisma.DispatchWhereInput[] = [];
+	const andConditions: Prisma.DispatchWhereInput[] = [];
 
-  if (searchTerm) {
-    andConditions.push({
-      OR: dispatchSearchableFields.map((field) => ({
-        [field]: { contains: searchTerm, mode: 'insensitive' },
-      })),
-    });
-  }
+	if (searchTerm) {
+		andConditions.push({
+			OR: dispatchSearchableFields.map((field) => ({
+				[field]: { contains: searchTerm, mode: "insensitive" },
+			})),
+		});
+	}
 
-  if (Object.keys(filterData).length > 0) {
-    andConditions.push({
-      AND: Object.keys(filterData).map((key) => ({
-        [key]: (filterData as any)[key],
-      })),
-    });
-  }
-  const whereConditions: Prisma.DispatchWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
+	if (Object.keys(filterData).length > 0) {
+		andConditions.push({
+			AND: Object.keys(filterData).map((key) => ({
+				[key]: (filterData as any)[key],
+			})),
+		});
+	}
+	const whereConditions: Prisma.DispatchWhereInput =
+		andConditions.length > 0 ? { AND: andConditions } : {};
 
-  const result = await prisma.dispatch.findMany({
-    where: whereConditions,
-    skip,
-    take: limit,
-    orderBy: sortBy ? { [sortBy]: sortOrder } : { createdAt: 'desc' },
-    include: {
-      ambulance: true,
-      dispatcher: { select: { id: true, name: true, email: true } },
-      emergencyRequest: true,
-    },
-  });
+	const result = await prisma.dispatch.findMany({
+		where: whereConditions,
+		skip,
+		take: limit,
+		orderBy: sortBy ? { [sortBy]: sortOrder } : { createdAt: "desc" },
+		include: {
+			ambulance: true,
+			dispatcher: { select: { id: true, name: true, email: true } },
+			emergencyRequest: true,
+		},
+	});
 
-  const total = await prisma.dispatch.count({ where: whereConditions });
+	const total = await prisma.dispatch.count({ where: whereConditions });
 
-  return {
-    meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
-    data: result,
-  };
+	return {
+		meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+		data: result,
+	};
 };
 
 const getSingleDispatch = async (id: string) => {
-  const result = await prisma.dispatch.findUniqueOrThrow({
-    where: { id },
-    include: {
-      ambulance: true,
-      dispatcher: { select: { id: true, name: true, email: true } },
-      emergencyRequest: true,
-    },
-  });
-  return result;
+	const result = await prisma.dispatch.findUniqueOrThrow({
+		where: { id },
+		include: {
+			ambulance: true,
+			dispatcher: { select: { id: true, name: true, email: true } },
+			emergencyRequest: true,
+		},
+	});
+	return result;
 };
-
 
 const updateDispatch = async (id: string, payload: Partial<TDispatch>) => {
-  await prisma.dispatch.findUniqueOrThrow({ where: { id } });
+	await prisma.dispatch.findUniqueOrThrow({ where: { id } });
 
-  const result = await prisma.dispatch.update({
-    where: { id },
-    data: payload,
-  });
+	const result = await prisma.dispatch.update({
+		where: { id },
+		data: payload,
+	});
 
-  return result;
+	return result;
 };
 const ALLOWED_TRANSITIONS: Record<RequestStatus, RequestStatus[]> = {
-  REQUESTED: ['DISPATCHED', 'CANCELLED'],
-  DISPATCHED: ['EN_ROUTE', 'CANCELLED'],
-  EN_ROUTE: ['PICKED_UP', 'CANCELLED'],
-  PICKED_UP: ['HOSPITAL_SELECTED', 'CANCELLED'],
-  HOSPITAL_SELECTED: ['ARRIVED', 'CANCELLED'],
-  ARRIVED: ['COMPLETED'],
-  COMPLETED: [],
-  CANCELLED: [],
+	REQUESTED: ["DISPATCHED", "CANCELLED"],
+	DISPATCHED: ["EN_ROUTE", "CANCELLED"],
+	EN_ROUTE: ["PICKED_UP", "CANCELLED"],
+	PICKED_UP: ["HOSPITAL_SELECTED", "CANCELLED"],
+	HOSPITAL_SELECTED: ["ARRIVED", "CANCELLED"],
+	ARRIVED: ["COMPLETED"],
+	COMPLETED: [],
+	CANCELLED: [],
 };
 const TERMINAL_STATUSES: RequestStatus[] = [
-  RequestStatus.COMPLETED,
-  RequestStatus.CANCELLED,
+	RequestStatus.COMPLETED,
+	RequestStatus.CANCELLED,
 ];
 
 const updateTripStatus = async (
-  id: string,
-  status: RequestStatus,
-  userId: string
+	id: string,
+	status: RequestStatus,
+	userId: string,
 ) => {
-  const result = await prisma.$transaction(async (tx) => {
-    const dispatch = await tx.dispatch.findUniqueOrThrow({
-      where: { id },
-      include: { emergencyRequest: true },
-    });
+	const result = await prisma.$transaction(async (tx) => {
+		const dispatch = await tx.dispatch.findUniqueOrThrow({
+			where: { id },
+			include: { emergencyRequest: true },
+		});
 
-    const oldStatus = dispatch.emergencyRequest.status;
+		const oldStatus = dispatch.emergencyRequest.status;
 
-    if (!ALLOWED_TRANSITIONS[oldStatus]?.includes(status)) {
-      throw new AppError(
-        httpStatus.BAD_REQUEST,
-        `Cannot change status from ${oldStatus} to ${status}`
-      );
-    }
+		if (!ALLOWED_TRANSITIONS[oldStatus]?.includes(status)) {
+			throw new AppError(
+				httpStatus.BAD_REQUEST,
+				`Cannot change status from ${oldStatus} to ${status}`,
+			);
+		}
 
-    const updatedRequest = await tx.emergencyRequest.update({
-      where: { id: dispatch.emergencyRequestId },
-      data: { status },
-    });
+		const updatedRequest = await tx.emergencyRequest.update({
+			where: { id: dispatch.emergencyRequestId },
+			data: { status },
+		});
 
+		if (TERMINAL_STATUSES.includes(status)) {
+			await tx.ambulance.update({
+				where: { id: dispatch.ambulanceId },
+				data: { status: AmbulanceStatus.AVAILABLE },
+			});
+		}
 
-    if (TERMINAL_STATUSES.includes(status)) {
-      await tx.ambulance.update({
-        where: { id: dispatch.ambulanceId },
-        data: { status: AmbulanceStatus.AVAILABLE },
-      });
-    }
+		await tx.auditLog.create({
+			data: {
+				userId,
+				action: "TRIP_STATUS_UPDATED",
+				entityType: "EmergencyRequest",
+				entityId: dispatch.emergencyRequestId,
+				oldValue: { status: oldStatus },
+				newValue: { status },
+			},
+		});
 
-    await tx.auditLog.create({
-      data: {
-        userId,
-        action: 'TRIP_STATUS_UPDATED',
-        entityType: 'EmergencyRequest',
-        entityId: dispatch.emergencyRequestId,
-        oldValue: { status: oldStatus },
-        newValue: { status },
-      },
-    });
+		return updatedRequest;
+	});
 
-    return updatedRequest;
-  });
-
-  return result;
+	return result;
 };
 
 export const DispatchService = {
-  createDispatch,
-  getAllDispatches,
-  getSingleDispatch,
-  updateDispatch,
-  updateTripStatus,
-
+	createDispatch,
+	getAllDispatches,
+	getSingleDispatch,
+	updateDispatch,
+	updateTripStatus,
 };

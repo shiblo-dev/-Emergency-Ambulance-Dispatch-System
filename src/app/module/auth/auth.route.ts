@@ -24,8 +24,7 @@ router.post(
 	validateRequest(UserValidation.LoginZodSchema),
 	AuthController.loginUser,
 );
-router.get(
-	"/me",AuthController.getMe);
+router.get("/me", AuthController.getMe);
 
 router.post("/refresh-token", AuthController.refreshToken);
 router.post("/google", AuthController.googleLogin);

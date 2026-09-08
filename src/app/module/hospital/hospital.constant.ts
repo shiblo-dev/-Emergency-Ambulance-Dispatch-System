@@ -1,12 +1,12 @@
 export const hospitalSearchableFields: string[] = ["name", "address", "city"];
 export const hospitalFilterableFields: string[] = [
-  "searchTerm",
-  "name",
-  "city",
+	"searchTerm",
+	"name",
+	"city",
 ];
 export const paginationFields: string[] = [
-  "page",
-  "limit",
-  "sortBy",
-  "sortOrder",
+	"page",
+	"limit",
+	"sortBy",
+	"sortOrder",
 ];

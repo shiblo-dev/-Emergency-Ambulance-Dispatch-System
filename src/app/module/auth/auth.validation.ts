@@ -6,9 +6,7 @@ const PatientRegistrationZodSchema = z.object({
 		.min(3, "Name must at least 3 characters long!!!")
 		.max(50),
 	email: z.email("Not email!!"),
-	password: z
-		.string()
-		.min(8, "Password Must Minimum 8 Characters Long."),
+	password: z.string().min(8, "Password Must Minimum 8 Characters Long."),
 	patient: z
 		.object({
 			contactNumber: z.string().optional(),
@@ -22,9 +20,7 @@ const PatientEmailVerifyZodSchema = z.object({
 
 const LoginZodSchema = z.object({
 	email: z.email(),
-	password: z
-		.string()
-		.min(8, "Password Must Minimum 8 Characters Long."),
+	password: z.string().min(8, "Password Must Minimum 8 Characters Long."),
 });
 
 const ForgotPasswordZodSchema = z.object({
@@ -33,9 +29,7 @@ const ForgotPasswordZodSchema = z.object({
 
 const ResetPasswordZodSchema = z.object({
 	email: z.email(),
-	newPassword: z
-		.string()
-		.min(8, "Password Must Minimum 8 Characters Long."),
+	newPassword: z.string().min(8, "Password Must Minimum 8 Characters Long."),
 
 	otp: z.string().length(6),
 });

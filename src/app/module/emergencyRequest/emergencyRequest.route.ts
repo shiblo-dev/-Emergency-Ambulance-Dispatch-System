@@ -9,41 +9,41 @@ import { Role } from "../../../generated/prisma/enums";
 const router = express.Router();
 
 router.post(
-  "/",
-  auth(Role.PATIENT),
-  validateRequest(EmergencyRequestValidation.createEmergencyRequestZodSchema),
-  EmergencyRequestController.createEmergencyRequest
+	"/",
+	auth(Role.PATIENT),
+	validateRequest(EmergencyRequestValidation.createEmergencyRequestZodSchema),
+	EmergencyRequestController.createEmergencyRequest,
 );
 
 router.get(
-  "/",
-  auth(Role.DISPATCHER, Role.ADMIN),
-  EmergencyRequestController.getAllEmergencyRequests
+	"/",
+	auth(Role.DISPATCHER, Role.ADMIN),
+	EmergencyRequestController.getAllEmergencyRequests,
 );
 
 router.get(
-  "/:id",
-  auth(Role.PATIENT, Role.DISPATCHER, Role.ADMIN),
-  EmergencyRequestController.getEmergencyRequestById
+	"/:id",
+	auth(Role.PATIENT, Role.DISPATCHER, Role.ADMIN),
+	EmergencyRequestController.getEmergencyRequestById,
 );
 
 router.patch(
-  "/:id/status",
-  auth(Role.DISPATCHER, Role.ADMIN),
-  validateRequest(EmergencyRequestValidation.updateRequestStatusZodSchema),
-  EmergencyRequestController.updateRequestStatus
+	"/:id/status",
+	auth(Role.DISPATCHER, Role.ADMIN),
+	validateRequest(EmergencyRequestValidation.updateRequestStatusZodSchema),
+	EmergencyRequestController.updateRequestStatus,
 );
 
 router.patch(
-  "/:id/cancel",
-  auth(Role.PATIENT),
-  EmergencyRequestController.cancelEmergencyRequest
+	"/:id/cancel",
+	auth(Role.PATIENT),
+	EmergencyRequestController.cancelEmergencyRequest,
 );
 
 router.delete(
-  "/:id",
-  auth(Role.ADMIN),
-  EmergencyRequestController.softDeleteEmergencyRequest
+	"/:id",
+	auth(Role.ADMIN),
+	EmergencyRequestController.softDeleteEmergencyRequest,
 );
 
 export const EmergencyRequestRoutes = router;

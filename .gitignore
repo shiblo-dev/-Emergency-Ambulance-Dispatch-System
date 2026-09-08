@@ -4,6 +4,7 @@ node_modules
 dist
 
 /src/generated
+vercel.json
 
 # Lock Files
 pnpm-lock.yaml
@@ -11,3 +12,5 @@ yarn.lock
 package-lock.json
 pnpm-workspace.yaml
 .vscode
+
+.vercel

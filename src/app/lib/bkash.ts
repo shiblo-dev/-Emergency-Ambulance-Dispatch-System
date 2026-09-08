@@ -37,7 +37,10 @@ export const getBkashIdToken = async () => {
 				},
 			);
 			if (!refreshTokenResponse.ok) {
-				throw new AppError(httpStatus.BAD_GATEWAY, "Bkash Access Token Grant Failed");
+				throw new AppError(
+					httpStatus.BAD_GATEWAY,
+					"Bkash Access Token Grant Failed",
+				);
 			}
 
 			const bkashRefreshTokenResult = await refreshTokenResponse.json();
@@ -76,7 +79,10 @@ export const getBkashIdToken = async () => {
 		);
 
 		if (!response.ok) {
-			throw new AppError(httpStatus.BAD_GATEWAY, "Bkash Access Token Grant Failed");
+			throw new AppError(
+				httpStatus.BAD_GATEWAY,
+				"Bkash Access Token Grant Failed",
+			);
 		}
 
 		const result = await response.json();
@@ -87,7 +93,7 @@ export const getBkashIdToken = async () => {
 				value: 60 * 60, // 1hour
 			},
 		});
- 
+
 		await redisClient.set(RefreshTokenKey, result.refresh_token, {
 			expiration: {
 				type: "EX",

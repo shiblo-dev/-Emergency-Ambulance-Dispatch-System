@@ -9,4 +9,3 @@ Cloudinary.config({
 });
 
 export const cloudinary = Cloudinary;
-

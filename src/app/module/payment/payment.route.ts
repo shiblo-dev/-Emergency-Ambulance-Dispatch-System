@@ -7,16 +7,12 @@ const router = Router();
 
 router.get("/my-payments", auth(Role.PATIENT), PaymentController.getMyPayments);
 
-router.get(
-    "/all-payments",
-    auth(Role.ADMIN),
-    PaymentController.getAllPayments,
-);
+router.get("/all-payments", auth(Role.ADMIN), PaymentController.getAllPayments);
 
 router.get(
-    "/:paymentId",
-    auth(Role.PATIENT, Role.ADMIN, Role.DISPATCHER),
-    PaymentController.getSinglePayment,
+	"/:paymentId",
+	auth(Role.PATIENT, Role.ADMIN, Role.DISPATCHER),
+	PaymentController.getSinglePayment,
 );
 
 export const PaymentRoutes = router;
