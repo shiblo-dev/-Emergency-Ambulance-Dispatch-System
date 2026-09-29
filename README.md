@@ -1,7 +1,7 @@
 # Emergency-Ambulance-Dispatch-System — Backend
 
 **Stack:** Node.js · Express 5 · TypeScript · Prisma 7 · PostgreSQL · JWT auth
-.radis .cloudinary .multar 
+ 
 ## Where the project stands today
 
 This is an early build, not the finished product. Right now the only working feature is authentication — a patient can register, log in, and fetch their own profile
