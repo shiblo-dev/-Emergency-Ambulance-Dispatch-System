@@ -2,6 +2,8 @@
 model Patient {
   id     String @id @default(uuid())
   userId String @unique
+  name   String
+  email  String @unique
   user   User   @relation(fields: [userId], references: [id])
 
    @@map("patient")
